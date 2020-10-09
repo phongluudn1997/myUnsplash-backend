@@ -12,14 +12,19 @@ router.post("/register", async (req, res, next) => {
     nickname
   } = req.body;
 
-  const existedUser = await User.findOne({
-    email
-  }).exec();
-  if (existedUser) {
-    return res.status(400).json({
-      message: "Email already been registered!",
-    });
+  try {
+    const existedUser = await User.findOne({
+      email
+    }).exec();
+    if (existedUser) {
+      return res.status(400).json({
+        message: "Email already been registered!",
+      });
+    }
+  } catch (error) {
+    next(error)
   }
+
   const hashedPassword = await bcrypt.hash(password, SALT);
   const newUser = new User({
     email,
