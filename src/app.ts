@@ -4,12 +4,8 @@ const app = express();
 import dotenv from "dotenv";
 dotenv.config();
 
-import { NextFunction, Response, Request } from "express";
 import router from "./routes";
 import { handleError } from "./middlewares";
-
-import connectDB from "./helpers/db-connection";
-connectDB();
 
 const bodyParser = require("body-parser");
 app.use(
@@ -24,12 +20,6 @@ app.use(
 );
 
 app.use("/api", router);
-// app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-//   res.status(500).json(err);
-// });
 app.use(handleError);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
-});
+export default app;

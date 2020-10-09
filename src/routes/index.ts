@@ -4,7 +4,7 @@ const router = express.Router();
 import userRouter from "./userAPI";
 
 router.get("/hello-world", (req, res) => {
-  throw new BadRequestError();
+  return res.send("Hello World");
 });
 router.use("/user", userRouter);
 
