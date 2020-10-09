@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const User = require("../models/user");
+import User from "../models/user";
 const SALT = 10;
 const privateKey = process.env.PRIVATE_KEY || "";
 
@@ -31,14 +31,13 @@ router.post("/register", async (req, res, next) => {
   });
   newUser
     .save()
-    .then((result) => {
-      console.log(result);
+    .then((result: any) => {
       return res.status(200).json({
         message: "Register successfully!",
         email,
       });
     })
-    .catch((err) => next(err));
+    .catch((err: any) => next(err));
 });
 
 router.post("/login", async (req, res, next) => {
@@ -86,4 +85,4 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;
