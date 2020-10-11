@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import router from "./routes";
-import { handleError, asyncHandler } from "./middlewares";
+import { asyncHandler, handleError } from "./middlewares";
 
 const bodyParser = require("body-parser");
 app.use(
@@ -20,6 +20,7 @@ app.use(
 );
 
 app.use("/api", router);
+
 app.use(handleError);
 
 export default app;

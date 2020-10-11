@@ -1,21 +1,24 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 const router = express.Router();
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
 
-import User from "../models/user";
+import { registerModel, User } from "../schemas/user";
 import BadRequestError from "../common/errors/bad-request.error";
-import { asyncHandler } from "../middlewares";
+import { asyncHandler, validateRequest } from "../middlewares";
+
 const SALT = 10;
 const privateKey = process.env.PRIVATE_KEY || "";
 
 router.post(
   "/register",
+  registerModel,
+  validateRequest,
   asyncHandler(async (req: Request, res: Response) => {
     const { email, password, nickname } = req.body;
 
-    const existedUser = await User.findOne1({ email }).exec();
+    const existedUser = await User.findOne({ email }).exec();
     if (existedUser) {
       throw new BadRequestError("Email registered!");
     }
