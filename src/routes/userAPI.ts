@@ -2,43 +2,38 @@ import express from "express";
 const router = express.Router();
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
 
 import User from "../models/user";
+import BadRequestError from "../common/errors/bad-request.error";
+import { asyncHandler } from "../middlewares";
 const SALT = 10;
 const privateKey = process.env.PRIVATE_KEY || "";
 
-router.post("/register", async (req, res, next) => {
-  const { email, password, nickname } = req.body;
+router.post(
+  "/register",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { email, password, nickname } = req.body;
 
-  try {
-    const existedUser = await User.findOne({
-      email,
-    }).exec();
+    const existedUser = await User.findOne1({ email }).exec();
     if (existedUser) {
-      return res.status(400).json({
-        message: "Email already been registered!",
+      throw new BadRequestError("Email registered!");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, SALT);
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      nickname,
+    });
+    if (user) {
+      return res.status(200).json({
+        message: "User created",
+        user,
       });
     }
-  } catch (error) {
-    next(error);
-  }
-
-  const hashedPassword = await bcrypt.hash(password, SALT);
-  const newUser = new User({
-    email,
-    password: hashedPassword,
-    nickname,
-  });
-  newUser
-    .save()
-    .then((result: any) => {
-      return res.status(200).json({
-        message: "Register successfully!",
-        email,
-      });
-    })
-    .catch((err: any) => next(err));
-});
+  })
+);
 
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;

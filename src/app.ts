@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import router from "./routes";
-import { handleError } from "./middlewares";
+import { handleError, asyncHandler } from "./middlewares";
 
 const bodyParser = require("body-parser");
 app.use(
