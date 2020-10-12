@@ -20,7 +20,7 @@ router.post(
     const photo = await Photo.create({
       label,
       author,
-      url: process.env.S3_HOST + filename,
+      filename,
     });
     return res.status(200).json({
       message: "Success",
