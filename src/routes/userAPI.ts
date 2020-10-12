@@ -4,7 +4,7 @@ const router = express.Router();
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { registerModel, User } from "../schemas/user";
+import { authenSchema, User } from "../schemas/user";
 import BadRequestError from "../common/errors/bad-request.error";
 import { asyncHandler, validateRequest } from "../middlewares";
 
@@ -13,7 +13,7 @@ const privateKey = process.env.PRIVATE_KEY || "";
 
 router.post(
   "/register",
-  registerModel,
+  authenSchema,
   validateRequest,
   asyncHandler(async (req: Request, res: Response) => {
     const { email, password, nickname } = req.body;
@@ -36,49 +36,31 @@ router.post(
   })
 );
 
-router.post("/login", async (req, res, next) => {
-  const { email, password } = req.body;
+router.post(
+  "/login",
+  authenSchema,
+  validateRequest,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({
-      message: "Email and password required!",
-    });
-  }
-
-  try {
     const user = await User.findOne({
       email,
     }).exec();
     if (!user) {
-      return res.status(400).json({
-        message: "The email hasn't been registered!",
-      });
+      throw new BadRequestError("The email hasn't been registered!");
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(400).json({
-        message: "Wrong password!",
-      });
+      throw new BadRequestError("Wrong password!");
     }
 
-    try {
-      const token = await jwt.sign(
-        {
-          userId: user._id,
-        },
-        privateKey
-      );
-      return res.status(200).json({
-        message: "Login successfully!",
-        token,
-      });
-    } catch (error) {
-      next(error);
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+    const token = await jwt.sign({ userId: user._id }, privateKey);
+    return res.status(200).json({
+      message: "Login successfully!",
+      token,
+    });
+  })
+);
 
 export default router;

@@ -1,6 +1,6 @@
 import { checkSchema } from "express-validator";
 
-const registerModel = checkSchema({
+const authenSchema = checkSchema({
   email: {
     isEmail: {
       errorMessage: "Email must be valid",
@@ -17,4 +17,4 @@ const registerModel = checkSchema({
   },
 });
 
-export { registerModel };
+export { authenSchema };
