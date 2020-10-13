@@ -7,10 +7,12 @@ import upload from "../helper/multer";
 import minioClient from "../helper/minio";
 import { Photo } from "../schemas/photo";
 import fs from "fs";
+import { checkToken } from "../middlewares/checkToken";
 
 router.post(
   "/",
   upload.single("photo"),
+  checkToken,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { filename, path } = req.file;
     await minioClient.fPutObject(process.env.BUCKET_NAME, filename, path, {});
