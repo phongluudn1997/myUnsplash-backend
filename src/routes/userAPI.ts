@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { authenSchema, User } from "../schemas/user";
 import BadRequestError from "../common/errors/bad-request.error";
 import { asyncHandler, validateRequest } from "../middlewares";
+import { generateToken } from "../helper/token.util";
 
 const SALT = 10;
 const privateKey = process.env.PRIVATE_KEY || "";
@@ -55,7 +56,7 @@ router.post(
       throw new BadRequestError("Wrong password!");
     }
 
-    const token = await jwt.sign({ userId: user._id }, privateKey);
+    const token = await generateToken({ userId: user._id });
     return res.status(200).json({
       message: "Login successfully!",
       token,

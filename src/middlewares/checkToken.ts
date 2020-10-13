@@ -1,13 +1,13 @@
-import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "./async-handler";
+import { User } from "../schemas/user";
+import { decodeToken } from "../helper/token.util";
 
 const checkToken = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = await jwt.verify(token, process.env.PRIVATE_KEY);
-    req.decoded = decoded;
-    console.log(req.decoded);
+    const decodedData = await decodeToken(req.headers.authorization);
+    const { userId } = <any>decodedData;
+    req.currentUser = await User.findById(userId);
     next();
   }
 );

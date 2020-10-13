@@ -18,10 +18,10 @@ router.post(
     await minioClient.fPutObject(process.env.BUCKET_NAME, filename, path, {});
     fs.unlinkSync(path);
 
-    const { label, author } = req.body;
+    const { label } = req.body;
     const photo = await Photo.create({
       label,
-      author,
+      author: req.currentUser._id,
       filename,
     });
     return res.status(200).json({
