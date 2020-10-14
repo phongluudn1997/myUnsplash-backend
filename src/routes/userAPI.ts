@@ -2,15 +2,12 @@ import express, { Request, Response, NextFunction } from "express";
 const router = express.Router();
 
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
+import { register } from "../services/user.service";
 import { authenSchema, User } from "../schemas/user";
 import BadRequestError from "../common/errors/bad-request.error";
 import { asyncHandler, validateRequest } from "../middlewares";
 import { generateToken } from "../helper/token.util";
-
-const SALT = 10;
-const privateKey = process.env.PRIVATE_KEY || "";
+import { CreatedResponse } from "../common/response/created.response";
 
 router.post(
   "/register",
@@ -18,22 +15,8 @@ router.post(
   validateRequest,
   asyncHandler(async (req: Request, res: Response) => {
     const { email, password, nickname } = req.body;
-
-    const existedUser = await User.findOne({ email }).exec();
-    if (existedUser) {
-      throw new BadRequestError("Email registered!");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, SALT);
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-      nickname,
-    });
-    return res.status(200).json({
-      message: "User created",
-      user,
-    });
+    const newUser = await register(email, password, nickname);
+    return new CreatedResponse({ data: newUser }).send(res);
   })
 );
 
