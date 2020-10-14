@@ -8,6 +8,7 @@ import BadRequestError from "../common/errors/bad-request.error";
 import { Models } from "../../@types/express";
 import { randomBytes } from "crypto";
 import jwt from "jsonwebtoken";
+import config from "../config";
 
 const SALT = 10;
 export default class UserService {
@@ -56,6 +57,6 @@ export default class UserService {
   }
 
   private async generateToken(payload: IPayloadToken) {
-    return await jwt.sign(payload, process.env.PRIVATE_KEY);
+    return await jwt.sign(payload, config.jwtSecret);
   }
 }

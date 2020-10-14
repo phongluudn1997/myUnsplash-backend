@@ -1,6 +1,7 @@
 import app from "./app";
 import mongoose from "mongoose";
-const DB_URL = process.env.DB_URL;
+import config from "./config";
+const DB_URL = config.dbUrl;
 
 (() => {
   mongoose.connect(DB_URL, {
@@ -15,7 +16,7 @@ const DB_URL = process.env.DB_URL;
   });
 })();
 
-const port = process.env.PORT || 3000;
+const port = config.port || 3000;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
 });
