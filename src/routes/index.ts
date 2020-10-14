@@ -6,6 +6,7 @@ import photoRouter from "./photoAPI";
 router.get("/hello-world", (req, res) => {
   return res.send("Hello World");
 });
+
 router.use("/user", userRouter);
 router.use("/photo", photoRouter);
 
