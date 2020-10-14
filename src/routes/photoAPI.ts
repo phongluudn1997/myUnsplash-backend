@@ -8,6 +8,8 @@ import minioClient from "../helper/minio";
 import { Photo } from "../schemas/photo";
 import fs from "fs";
 import { checkToken } from "../middlewares/checkToken";
+import PhotoService from "../services/photo.service";
+import { CreatedResponse } from "../common/response/created.response";
 
 router.post(
   "/",
@@ -19,15 +21,16 @@ router.post(
     fs.unlinkSync(path);
 
     const { label } = req.body;
-    const photo = await Photo.create({
+    const photoService = new PhotoService(Photo);
+    const isSave = await photoService.uploadPhoto({
       label,
-      // author: req.currentUser._id,
       filename,
+      author: req.currentUser._id,
     });
-    return res.status(200).json({
-      message: "Success",
-      data: photo,
-    });
+
+    if (isSave) {
+      return new CreatedResponse({}).send(res);
+    }
   })
 );
 

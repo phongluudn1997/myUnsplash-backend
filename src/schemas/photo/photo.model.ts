@@ -1,3 +1,4 @@
+import { IPhoto } from "../../interfaces/IPhoto";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -17,5 +18,9 @@ const photoSchema = new Schema({
   },
 });
 
-const Photo = mongoose.model("Photo", photoSchema, "photos");
+const Photo = mongoose.model<IPhoto & mongoose.Document>(
+  "Photo",
+  photoSchema,
+  "photos"
+);
 export default Photo;

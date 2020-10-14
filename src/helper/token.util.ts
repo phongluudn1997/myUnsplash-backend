@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const decodeToken = async (authorization: string) => {
+export const decodeToken = (authorization: string) => {
   const token = authorization.split(" ")[1];
-  return await jwt.verify(token, process.env.PRIVATE_KEY);
+  return jwt.verify(token, process.env.PRIVATE_KEY);
 };
