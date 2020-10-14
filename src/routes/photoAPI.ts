@@ -6,10 +6,10 @@ const router = express.Router();
 import upload from "../helper/multer";
 import minioClient from "../helper/minio";
 import { Photo } from "../schemas/photo";
-import fs from "fs";
 import { checkToken } from "../middlewares/checkToken";
 import PhotoService from "../services/photo.service";
 import { CreatedResponse } from "../common/response/created.response";
+import { OkResponse } from "../common/response/ok.response";
 
 router.post(
   "/",
@@ -29,6 +29,17 @@ router.post(
     if (isSave) {
       return new CreatedResponse({}).send(res);
     }
+  })
+);
+
+router.get(
+  "/",
+  checkToken,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = req.currentUser;
+    const photoService = new PhotoService(Photo, minioClient);
+    const listPhotos = await photoService.getPhotosOfUser(_id);
+    return new OkResponse({ data: { listPhotos } }).send(res);
   })
 );
 

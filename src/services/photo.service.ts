@@ -20,4 +20,13 @@ export default class PhotoService {
     const isSave = await this.photoModel.create({ filename, author, label });
     return !!isSave;
   }
+
+  public async getPhotosOfUser(_id: string) {
+    const listPhotos = await this.photoModel.find({ author: _id });
+    const listPromises = listPhotos.map((photo) =>
+      this.minioClient.presignedGetObject(config.minio.bucket, photo.filename)
+    );
+    const listPaths = await Promise.all(listPromises);
+    return listPaths;
+  }
 }
