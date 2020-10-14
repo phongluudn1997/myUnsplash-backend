@@ -1,8 +1,13 @@
 import bcrypt from "bcrypt";
-import { IUserRegisterDTO } from "../interfaces/IUser";
+import {
+  IUserLoginDTO,
+  IUserRegisterDTO,
+  IPayloadToken,
+} from "../interfaces/IUser";
 import BadRequestError from "../common/errors/bad-request.error";
 import { Models } from "../../@types/express";
 import { randomBytes } from "crypto";
+import jwt from "jsonwebtoken";
 
 const SALT = 10;
 export default class UserService {
@@ -31,5 +36,26 @@ export default class UserService {
     delete user.password;
     delete user.salt;
     return user;
+  }
+
+  public async login(userLoginDTO: IUserLoginDTO) {
+    const { email, password } = userLoginDTO;
+
+    const user = await this.userModel.findOne({ email }).exec();
+    if (!user) {
+      throw new BadRequestError("The email hasn't been registered!");
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      throw new BadRequestError("Wrong password!");
+    }
+
+    const token = await this.generateToken({ _id: user._id });
+    return token;
+  }
+
+  private async generateToken(payload: IPayloadToken) {
+    return await jwt.sign(payload, process.env.PRIVATE_KEY);
   }
 }
