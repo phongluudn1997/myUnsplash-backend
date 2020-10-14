@@ -7,7 +7,7 @@ const checkToken = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedData = await decodeToken(req.headers.authorization);
     const { userId } = <any>decodedData;
-    req.currentUser = await User.findById(userId);
+    // req.currentUser = await User.findById(userId);
     next();
   }
 );

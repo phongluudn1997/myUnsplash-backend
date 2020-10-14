@@ -2,20 +2,21 @@ import express, { Request, Response, NextFunction } from "express";
 const router = express.Router();
 
 import bcrypt from "bcrypt";
-import { register } from "../services/user.service";
+import UserService, { register } from "../services/user.service";
 import { authenSchema, User } from "../schemas/user";
 import BadRequestError from "../common/errors/bad-request.error";
 import { asyncHandler, validateRequest } from "../middlewares";
 import { generateToken } from "../helper/token.util";
 import { CreatedResponse } from "../common/response/created.response";
+import userModel from "../schemas/user/user.model";
 
 router.post(
   "/register",
   authenSchema,
   validateRequest,
   asyncHandler(async (req: Request, res: Response) => {
-    const { email, password, nickname } = req.body;
-    const newUser = await register(email, password, nickname);
+    const userServiceInstance = new UserService(userModel);
+    const newUser = await userServiceInstance.register(req.body);
     return new CreatedResponse({ data: newUser }).send(res);
   })
 );

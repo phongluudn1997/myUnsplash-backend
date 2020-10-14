@@ -21,7 +21,7 @@ router.post(
     const { label } = req.body;
     const photo = await Photo.create({
       label,
-      author: req.currentUser._id,
+      // author: req.currentUser._id,
       filename,
     });
     return res.status(200).json({
