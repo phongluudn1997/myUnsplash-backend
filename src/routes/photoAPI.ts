@@ -17,15 +17,13 @@ router.post(
   checkToken,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { filename, path } = req.file;
-    await minioClient.fPutObject(process.env.BUCKET_NAME, filename, path, {});
-    fs.unlinkSync(path);
-
     const { label } = req.body;
-    const photoService = new PhotoService(Photo);
+    const photoService = new PhotoService(Photo, minioClient);
     const isSave = await photoService.uploadPhoto({
       label,
       filename,
       author: req.currentUser._id,
+      path,
     });
 
     if (isSave) {

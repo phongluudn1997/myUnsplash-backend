@@ -9,4 +9,5 @@ export interface IUploadPhotoDTO {
   filename: string;
   author: string;
   label: string;
+  path: string;
 }
