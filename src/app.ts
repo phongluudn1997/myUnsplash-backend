@@ -6,8 +6,10 @@ dotenv.config();
 
 import router from "./routes";
 import { handleError } from "./middlewares";
+import cors from "cors";
 
 const bodyParser = require("body-parser");
+app.use(cors());
 app.use(
   bodyParser.json({
     limit: "50mb",
