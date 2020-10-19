@@ -12,9 +12,9 @@ export interface IUserLoginDTO {
 export interface IUser {
   _id: string;
   email: string;
-  password: string;
-  nickname: string;
-  salt: string;
+  password?: string;
+  nickname?: string;
+  salt?: string;
 }
 
 export interface IPayloadToken {

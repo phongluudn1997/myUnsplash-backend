@@ -13,9 +13,6 @@ const checkToken = asyncHandler(
     }
     const { _id } = <IPayloadToken>decodedData;
     let currentUser = await User.findById(_id);
-    currentUser = currentUser.toObject();
-    delete currentUser.password;
-    delete currentUser.salt;
     req.currentUser = currentUser;
     next();
   }

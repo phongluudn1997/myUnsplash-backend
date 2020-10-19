@@ -16,6 +16,7 @@ router.post(
   upload.single("photo"),
   checkToken,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.file);
     const { filename, path } = req.file;
     const { label } = req.body;
     const photoService = new PhotoService(Photo, minioClient);

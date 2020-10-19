@@ -1,6 +1,8 @@
-const mongoose = require("mongoose");
+import { IUser } from "interfaces/IUser";
 
-const UserSchema = mongoose.Schema(
+import { Schema, Document, model } from "mongoose";
+
+const UserSchema = new Schema(
   {
     email: {
       type: String,
@@ -17,7 +19,18 @@ const UserSchema = mongoose.Schema(
     },
     salt: String,
   },
-  { timestamp: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(_: any, ret: any) {
+        delete ret.password;
+        delete ret.salt;
+        return ret;
+      },
+    },
+  }
 );
 
-export default mongoose.model("User", UserSchema, "users");
+export type IUserDocument = IUser & Document;
+
+export default model<IUserDocument>("User", UserSchema, "users");

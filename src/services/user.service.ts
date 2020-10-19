@@ -33,9 +33,6 @@ export default class UserService {
       nickname,
     });
 
-    user = user.toObject();
-    delete user.password;
-    delete user.salt;
     return user;
   }
 
