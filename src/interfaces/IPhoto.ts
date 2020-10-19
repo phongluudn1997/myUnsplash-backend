@@ -1,13 +1,12 @@
 export interface IPhoto {
   _id: string;
-  filename: string;
+  url: string;
   author: string;
   label: string;
 }
 
 export interface IUploadPhotoDTO {
-  filename: string;
+  file: any;
   author: string;
   label: string;
-  path: string;
 }

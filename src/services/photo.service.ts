@@ -3,28 +3,32 @@ import { IUploadPhotoDTO } from "../interfaces/IPhoto";
 import Minio from "minio";
 import fs from "fs";
 import config from "../config";
+import cloudinary, { Cloudinary } from "../helper/cloudinary";
+import photoModel from "../schemas/photo/photo.model";
 
 export default class PhotoService {
   photoModel: Models.PhotoModel;
   minioClient: Minio.Client;
-  constructor(photoModel: Models.PhotoModel, minioClient: Minio.Client) {
+  cloudinary: Cloudinary;
+  constructor() {
     this.photoModel = photoModel;
-    this.minioClient = minioClient;
+    this.cloudinary = cloudinary;
   }
 
   public async uploadPhoto(uploadPhotoDTO: IUploadPhotoDTO) {
-    const { path, filename, author, label } = uploadPhotoDTO;
-    await this.minioClient.fPutObject(config.minio.bucket, filename, path, {});
+    const { file, author, label } = uploadPhotoDTO;
+    const { path } = file;
+    const url = await this.cloudinary.uploadImage(file);
     fs.unlinkSync(path);
 
-    const isSave = await this.photoModel.create({ filename, author, label });
-    return !!isSave;
+    await this.photoModel.create({ url, author, label });
+    return url;
   }
 
   public async getPhotosOfUser(_id: string) {
     const listPhotos = await this.photoModel.find({ author: _id });
     const listPromises = listPhotos.map((photo) =>
-      this.minioClient.presignedGetObject(config.minio.bucket, photo.filename)
+      this.minioClient.presignedGetObject(config.minio.bucket, photo.url)
     );
     const listPaths = await Promise.all(listPromises);
     return listPaths;
