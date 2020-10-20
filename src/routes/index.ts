@@ -13,6 +13,6 @@ router.get("/", (req, res, next) => {
 });
 
 router.use("/user", userRouter);
-router.use("/photo", photoRouter);
+router.use("/photos", photoRouter);
 
 export default router;

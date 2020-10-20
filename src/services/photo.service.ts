@@ -33,4 +33,9 @@ export default class PhotoService {
     const listPaths = await Promise.all(listPromises);
     return listPaths;
   }
+
+  public async getPhotos() {
+    const listPhotos = await this.photoModel.find();
+    return listPhotos;
+  }
 }

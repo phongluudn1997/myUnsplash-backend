@@ -27,6 +27,15 @@ router.post(
 
 router.get(
   "/",
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const photoService = new PhotoService();
+    const photos = await photoService.getPhotos();
+    return new OkResponse({ data: { photos } }).send(res);
+  })
+);
+
+router.get(
+  "/my-photos",
   checkToken,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { _id } = req.currentUser;
